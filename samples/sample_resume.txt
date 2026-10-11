@@ -1,0 +1,30 @@
+ARUN KUMAR
+Chennai, Tamil Nadu | arun.kumar@example.com | +91 98765 43210
+github.com/arunkumar-dev | linkedin.com/in/arunkumar-dev
+
+SUMMARY
+Final-year MCA student seeking an entry-level Python developer role.
+
+EDUCATION
+MCA, Anna University, Chennai - CGPA 8.4
+BCA, Madras University - 78%
+
+TECHNICAL SKILLS
+Python, Flask, HTML, CSS, JavaScript, SQL, MySQL, SQLite, Git, GitHub, Bootstrap, Jinja2
+
+PROJECTS
+Bus Ticket Booking System - Python, Flask, SQLite
+- Developed a booking web application with seat selection and admin dashboard used by 150+ test users
+- Implemented REST API endpoints and role-based login, reducing manual booking effort by 40%
+
+Placement Tracking Portal - Flask, MySQL
+- Designed database tables and built student, admin and company modules
+- Collaborated with a team of 3 to deliver the project in 6 weeks
+
+INTERNSHIP
+Python Full Stack Intern, ABC Technologies (3 months)
+- Worked on bug fixes and responsible for writing small features in Flask
+- Improved page load time by 25% by optimizing SQL queries
+
+CERTIFICATIONS
+Cybersecurity Job Simulation - Forage

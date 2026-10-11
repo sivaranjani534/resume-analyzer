@@ -1,0 +1,8 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}AI Resume Analyzer{% endblock %}</title><link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head><body>
+<nav class="nav"><a class="brand" href="{{ url_for('index') }}">📄 AI Resume Analyzer</a>
+<div class="links">{% if g.user %}<a href="{{ url_for('index') }}">New analysis</a><a href="{{ url_for('features.dashboard') }}">Dashboard</a><a href="{{ url_for('history') }}">History</a><a href="{{ url_for('features.account') }}">👤 {{ g.user['name'] }}</a>
+<form method="post" action="{{ url_for('auth.logout') }}" class="inline"><input type="hidden" name="_csrf" value="{{ csrf_token }}"><button class="linkbtn" type="submit">Logout</button></form>
+{% else %}<a href="{{ url_for('auth.login') }}">Login</a><a href="{{ url_for('auth.register') }}">Register</a>{% endif %}</div></nav>
+<main class="container">{% with msgs = get_flashed_messages(with_categories=true) %}{% for c,m in msgs %}<div class="flash {{ c }}">{{ m }}</div>{% endfor %}{% endwith %}
+{% block content %}{% endblock %}</main></body></html>

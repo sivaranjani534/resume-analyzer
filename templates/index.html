@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% block content %}
+<h1>Analyze your resume against a job</h1><p class="sub">Upload your resume, paste the job description, and get a match score, missing skills and improvement tips.</p>
+<form method="post" action="{{ url_for('analyze') }}" enctype="multipart/form-data" id="form"><input type="hidden" name="_csrf" value="{{ csrf_token }}">
+<div class="grid g2">
+<div class="card"><h2>1. Your resume</h2>
+<div class="drop"><input type="file" name="resume" id="resume" accept=".pdf,.docx,.txt"><p class="muted small">PDF, DOCX or TXT · max 5 MB · processed in memory, never stored</p></div>
+<label>…or paste your resume text</label><textarea name="resume_text" id="resume_text" placeholder="Paste resume text here"></textarea></div>
+<div class="card"><h2>2. Job description</h2>
+<label>Job title (optional)</label><input name="job_title" id="job_title" placeholder="Python Full Stack Developer">
+<label>Paste the full job description</label><textarea name="job_description" id="jd" required placeholder="Paste the job description including the requirements list"></textarea></div></div>
+<div class="card">
+<label><input type="checkbox" name="use_ai" value="1" {{ 'checked' if ai_on else 'disabled' }}> Add an AI recruiter review {% if not ai_on %}<span class="muted small">(disabled - set the ANTHROPIC_API_KEY environment variable to enable; see README)</span>{% endif %}</label>
+<p><button class="btn" type="submit" id="go">Analyze resume</button><span class="loading" id="loading">Analyzing…</span>
+<button class="btn ghost" type="button" id="sample">Load sample data</button></p></div></form>
+<script>
+const S={jd:{{ sample_jd|tojson }},resume:{{ sample_resume|tojson }}};
+document.getElementById('sample').onclick=()=>{document.getElementById('jd').value=S.jd;document.getElementById('resume_text').value=S.resume;document.getElementById('job_title').value='Python Full Stack Developer'};
+document.getElementById('form').onsubmit=()=>{document.getElementById('loading').style.display='inline';document.getElementById('go').disabled=true};
+</script>{% endblock %}

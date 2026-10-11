@@ -1,0 +1,21 @@
+{% extends "base.html" %}{% block title %}Dashboard{% endblock %}{% block content %}
+<h1>Dashboard</h1><p class="sub">Your progress across all analyses.</p>
+{% if not stats %}<div class="card center"><p class="muted">No analyses yet - run your first one to see your dashboard.</p><a class="btn" href="{{ url_for('index') }}">New analysis</a></div>
+{% else %}
+<div class="grid g4"><div class="card stat"><b>{{ stats.count }}</b><span class="muted">Analyses</span></div>
+<div class="card stat"><b>{{ stats.avg }}%</b><span class="muted">Average match</span></div>
+<div class="card stat"><b>{{ stats.best }}%</b><span class="muted">Best match</span></div>
+<div class="card stat"><b>{{ stats.quality }}/100</b><span class="muted">Avg resume quality</span></div></div>
+<div class="card"><h2>Match score trend</h2>
+<svg viewBox="0 0 {{ W }} {{ H }}" class="trend" role="img" aria-label="Match score over time">
+{% for v in [0,50,100] %}{% set y = H - P - v/100*(H-2*P) %}<line x1="{{ P }}" x2="{{ W-P }}" y1="{{ y }}" y2="{{ y }}" class="grid-l"/><text x="2" y="{{ y+4 }}" class="axis">{{ v }}</text>{% endfor %}
+{% if pts|length > 1 %}<polyline points="{{ line }}" class="trend-line"/>{% endif %}
+{% for p in pts %}<circle cx="{{ p.x }}" cy="{{ p.y }}" r="5" class="trend-dot"><title>{{ p.label }}</title></circle>{% endfor %}</svg>
+<p class="small muted">Oldest to newest (last 100). Hover a dot for details.</p></div>
+<div class="grid g2">
+<div class="card"><h2>❌ Skills you miss most often</h2>{% for s in top_missing %}<div class="barrow"><span>{{ s.skill }}</span><div class="bar"><i class="miss" style="width:{{ s.pct }}%"></i></div><b>{{ s.n }}×</b></div>{% else %}<p class="muted">Nothing missing - great!</p>{% endfor %}
+<p class="small muted">Learn these first - they come up across the jobs you target.</p></div>
+<div class="card"><h2>✅ Your strongest matches</h2>{% for s in top_matched %}<div class="barrow"><span>{{ s.skill }}</span><div class="bar"><i class="ok" style="width:{{ s.pct }}%"></i></div><b>{{ s.n }}×</b></div>{% else %}<p class="muted">No matches yet.</p>{% endfor %}</div></div>
+<div class="card"><h2>Recent analyses</h2><table><tr><th>Date</th><th>Job</th><th>Match</th><th></th></tr>
+{% for r in recent %}<tr><td>{{ r['created_at']|when }}</td><td>{{ r['job_title'] or r['filename'] }}</td><td><b>{{ r['score'] }}%</b></td><td><a class="btn sm ghost" href="{{ url_for('view', aid=r['id']) }}">Open</a></td></tr>{% endfor %}</table></div>
+{% endif %}{% endblock %}

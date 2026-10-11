@@ -1,0 +1,16 @@
+{% extends "base.html" %}{% block content %}<h1>History</h1><p class="sub">Your previous analyses. Tick two rows to compare them.</p>
+<form method="get" action="{{ url_for('history') }}" class="searchbar"><input name="q" value="{{ q }}" placeholder="Search by job title or file name"><button class="btn ghost" type="submit">Search</button>
+{% if q %}<a class="btn ghost" href="{{ url_for('history') }}">Clear</a>{% endif %}<a class="btn ghost" href="{{ url_for('features.export_csv') }}">Export CSV</a></form>
+<form method="get" action="{{ url_for('features.compare') }}" id="cmp">
+<div class="card" style="overflow-x:auto"><table><tr><th></th><th>Date</th><th>Job</th><th>Resume</th><th>Match</th><th>Quality</th><th></th></tr>
+{% for r in rows %}<tr><td><input type="checkbox" class="pick" name="ids" value="{{ r['id'] }}"></td><td>{{ r['created_at']|when }}</td><td>{{ r['job_title'] or '-' }}</td><td>{{ r['filename'] }}</td><td><b>{{ r['score'] }}%</b></td><td>{{ r['quality'] }}/100</td>
+<td><a class="btn sm ghost" href="{{ url_for('view', aid=r['id']) }}">Open</a>
+<button class="btn sm danger" type="submit" form="del-{{ r['id'] }}" onclick="return confirm('Delete this analysis?')">Delete</button></td></tr>
+{% else %}<tr><td colspan="7" class="center muted">{{ 'No matches.' if q else 'No analyses yet.' }}</td></tr>{% endfor %}</table></div>
+{% if rows|length > 1 %}<p><button class="btn" type="submit" id="cmpbtn" disabled>Compare selected (0/2)</button></p>{% endif %}</form>
+{% for r in rows %}<form id="del-{{ r['id'] }}" method="post" action="{{ url_for('delete', aid=r['id']) }}"><input type="hidden" name="_csrf" value="{{ csrf_token }}"></form>{% endfor %}
+<script>
+const picks=[...document.querySelectorAll('.pick')],btn=document.getElementById('cmpbtn');
+function sync(){const n=picks.filter(p=>p.checked).length;if(btn){btn.disabled=n!==2;btn.textContent='Compare selected ('+n+'/2)'}picks.forEach(p=>{if(!p.checked)p.disabled=n>=2})}
+picks.forEach(p=>p.addEventListener('change',sync));sync();
+</script>{% endblock %}

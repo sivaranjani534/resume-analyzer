@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block title %}Compare{% endblock %}{% block content %}
+{% macro delta(v, unit) %}<b class="{{ 'up' if v > 0 else ('down' if v < 0 else '') }}">{{ '+' if v > 0 }}{{ v }}{{ unit }}</b>{% endmacro %}
+<h1>Compare analyses</h1><p class="sub">Older ➜ newer. See what improved between the two runs.</p>
+<div class="card" style="overflow-x:auto"><table><tr><th></th><th>Before</th><th>After</th><th>Change</th></tr>
+<tr><td>Analysis</td><td>{{ a_row['job_title'] or a_row['filename'] }}<div class="small muted">{{ a_row['created_at']|when }}</div></td><td>{{ b_row['job_title'] or b_row['filename'] }}<div class="small muted">{{ b_row['created_at']|when }}</div></td><td></td></tr>
+<tr><td>Overall match</td><td>{{ a.score }}%</td><td>{{ b.score }}%</td><td>{{ delta(d.score, ' pts') }}</td></tr>
+<tr><td>Skill match</td><td>{{ a.skill_match if a.skill_match is not none else '-' }}%</td><td>{{ b.skill_match if b.skill_match is not none else '-' }}%</td><td>{{ delta(d.skill, ' pts') }}</td></tr>
+<tr><td>Resume quality</td><td>{{ a.quality.score }}/100</td><td>{{ b.quality.score }}/100</td><td>{{ delta(d.quality, ' pts') }}</td></tr></table></div>
+<div class="grid g3">
+<div class="card"><h2>🆕 Skills gained</h2>{% for s in d.gained %}<span class="chip ok">{{ s }}</span>{% else %}<p class="muted small">None</p>{% endfor %}</div>
+<div class="card"><h2>📉 Skills no longer matched</h2>{% for s in d.lost %}<span class="chip miss">{{ s }}</span>{% else %}<p class="muted small">None</p>{% endfor %}</div>
+<div class="card"><h2>⚠️ Still missing in both</h2>{% for s in d.still_missing %}<span class="chip miss">{{ s }}</span>{% else %}<p class="muted small">None</p>{% endfor %}</div></div>
+<p><a class="btn ghost" href="{{ url_for('history') }}">Back to history</a></p>{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}{% block title %}Analysis result{% endblock %}
+{% block content %}
+{% set cls = 'low' if r.score < 50 else ('mid' if r.score < 75 else '') %}
+<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px"><div><h1>{{ r.job_title or 'Job match result' }}</h1>
+<p class="sub">{{ row['filename'] }} · {{ row['created_at']|when }}</p></div>
+<div class="noprint"><button class="btn ghost" onclick="window.print()">Print / Save PDF</button> <a class="btn ghost" href="{{ url_for('features.export_txt', aid=row['id']) }}">Download TXT</a> <a class="btn ghost" href="{{ url_for('features.export_json', aid=row['id']) }}">Download JSON</a> <a class="btn" href="{{ url_for('index') }}">New analysis</a></div></div>
+<div class="grid g3">
+<div class="card center"><div class="gauge {{ cls }}" style="--p:{{ r.score }}"><div>{{ r.score }}%</div></div><h2 style="margin-top:12px">{{ r.verdict }}</h2><span class="muted small">Overall job match</span></div>
+<div class="card stat"><b>{{ r.skill_match if r.skill_match is not none else '-' }}{{ '%' if r.skill_match is not none }}</b><span class="muted">Skill match</span><p class="small muted">{{ r.matched|length }} of {{ r.jd_skill_count }} required skills found</p></div>
+<div class="card stat"><b>{{ r.quality.score }}/100</b><span class="muted">Resume quality (ATS)</span><p class="small muted">Keyword similarity: {{ r.text_similarity }}%</p></div></div>
+
+<div class="grid g2"><div class="card"><h2>✅ Matched skills ({{ r.matched|length }})</h2>
+{% for m in r.matched %}<span class="chip ok" title="{{ m.category }} · mentioned {{ m.resume_count }}×">{{ m.skill }}</span>{% else %}<p class="muted">No required skills matched.</p>{% endfor %}</div>
+<div class="card"><h2>❌ Missing skills ({{ r.missing|length }})</h2>
+{% for m in r.missing %}<span class="chip miss" title="{{ m.category }}">{{ m.skill }}</span>{% else %}<p class="muted">Great - no required skills missing!</p>{% endfor %}</div></div>
+
+{% if r.missing %}<div class="card"><h2>How to close each gap</h2><div class="table-wrap" style="overflow-x:auto"><table><tr><th>Skill</th><th>Category</th><th>What to do</th></tr>
+{% for m in r.missing %}<tr><td><b>{{ m.skill }}</b></td><td>{{ m.category }}</td><td>{{ m.tip }}</td></tr>{% endfor %}</table></div></div>{% endif %}
+
+<div class="card"><h2>💡 Improvement suggestions</h2>
+{% for s in r.suggestions %}<div class="sug {{ s.priority }}"><span class="pri">{{ s.priority }}</span><b>{{ s.title }}</b><div class="muted small">{{ s.detail }}</div></div>{% else %}<p class="muted">No suggestions - nice work.</p>{% endfor %}</div>
+
+{% if r.ai %}<div class="card" style="border-color:#5eead4"><h2>🤖 AI recruiter review</h2><pre class="ai">{{ r.ai }}</pre></div>{% endif %}
+
+<div class="grid g2"><div class="card"><h2>Resume quality checklist</h2>
+{% for c in r.quality.checks %}<div class="check"><span>{{ '✅' if c.ok else '⚠️' }}</span><div><b>{{ c.label }}</b> <span class="muted small">{{ c.detail }}</span></div></div>{% endfor %}</div>
+<div class="card"><h2>Skills found in your resume ({{ r.resume_skill_count }})</h2>
+{% for cat, skills in r.resume_skills.items() %}<p class="small muted" style="margin:8px 0 2px">{{ cat }}</p>{% for s in skills %}<span class="chip neutral">{{ s }}</span>{% endfor %}{% else %}<p class="muted">No known skills detected.</p>{% endfor %}
+{% if r.extra %}<h2 style="margin-top:16px">Extra skills (not in this job)</h2>{% for s in r.extra %}<span class="chip neutral">{{ s }}</span>{% endfor %}{% endif %}
+{% if r.missing_keywords %}<h2 style="margin-top:16px">Other job keywords not in your resume</h2>{% for k in r.missing_keywords %}<span class="chip miss">{{ k }}</span>{% endfor %}{% endif %}</div></div>
+<p class="muted small">Scores are an estimate based on keyword and skill matching - use them as guidance, not a verdict.</p>
+{% endblock %}

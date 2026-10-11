@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block title %}Account{% endblock %}{% block content %}
+<h1>My account</h1><p class="sub">{{ g.user['name'] }} · {{ g.user['email'] }} · member since {{ g.user['created_at']|when }} · {{ count }} saved analyses</p>
+<div class="grid g2">
+<div class="card"><h2>Change password</h2><form method="post"><input type="hidden" name="_csrf" value="{{ csrf_token }}">
+<label>Current password</label><input type="password" name="current" required autocomplete="current-password">
+<label>New password</label><input type="password" name="new" required minlength="8" autocomplete="new-password">
+<label>Confirm new password</label><input type="password" name="confirm" required minlength="8" autocomplete="new-password">
+<p><button class="btn" type="submit">Update password</button></p></form></div>
+<div class="card"><h2>Your data</h2><p class="muted small">Download all your analysis scores as a spreadsheet-friendly CSV.</p>
+<p><a class="btn ghost" href="{{ url_for('features.export_csv') }}">Export history (CSV)</a></p>
+<h2 style="margin-top:24px;color:var(--err)">Delete account</h2><p class="muted small">Permanently removes your account and every saved analysis. This cannot be undone.</p>
+<form method="post" action="{{ url_for('features.delete_account') }}" onsubmit="return confirm('Delete your account and all analyses permanently?')"><input type="hidden" name="_csrf" value="{{ csrf_token }}">
+<label>Confirm with your password</label><input type="password" name="password" required autocomplete="current-password">
+<p><button class="btn danger" type="submit">Delete my account</button></p></form></div></div>{% endblock %}

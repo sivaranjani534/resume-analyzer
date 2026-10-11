@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block title %}Register{% endblock %}{% block content %}
+<div class="card narrow"><h1>Create account</h1><p class="sub">Your analyses are private to your account.</p>
+<form method="post"><input type="hidden" name="_csrf" value="{{ csrf_token }}">
+<label>Name</label><input name="name" value="{{ name }}" required maxlength="80" autofocus>
+<label>Email</label><input type="email" name="email" value="{{ email }}" required autocomplete="username">
+<label>Password <span class="muted small">(8+ characters, letters and numbers)</span></label><input type="password" name="password" required minlength="8" autocomplete="new-password">
+<label>Confirm password</label><input type="password" name="confirm" required minlength="8" autocomplete="new-password">
+<p><button class="btn" type="submit">Register</button></p></form>
+<p class="small muted">Already registered? <a href="{{ url_for('auth.login') }}">Login</a></p></div>{% endblock %}
